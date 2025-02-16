@@ -2,19 +2,16 @@ function CreateClickableImageandAreasHTML(ControllerParameters) {
     var Path = ControllerParameters.Path;
     var Alt = ControllerParameters.Alt;
     var areas = ControllerParameters.areas;
-    var color = ControllerParameters.Color;
-    var align = ControllerParameters.Align;
 
     var areaElements = "";
     $.each(areas, function (index, area) {
-        var areaHtml = '<area alt="" title="" href="#" DisplayLabel="' + ControllerParameters.DisplayLabel + '" color="' + color + '" shape="' + area.shape + '" name="' + area.area + '" data-tooltip="' + area["data-tooltip"] + '" coords="' + area.coords + '" class="TransformtoSlide" TransformtoSlideNum="' + area.TransformtoSlideNum + '">';
+        var areaHtml = '<area alt="" title="" href="#" shape="' + area.shape + '" name="' + area.area + '" data-tooltip="' + area["data-tooltip"] + '" coords="' + area.coords + '" class="TransformtoSlide" TransformtoSlideNum="' + area.TransformtoSlideNum + '">';
         areaElements += areaHtml;
     });
 
 
-    debugger;
-    ControllerHTML = '<div style="algin:' + align + '">' +
-        '<div id="div_ProfessionalClickableImageDescription" class="col-xs-12" style="padding: 10px;">' + ControllerParameters.Description +'</div>' +
+
+    ControllerHTML = '<div>' +
         '<div id="imagemap" style="text-align:center;">' +
         '<img id="image_Professional_Clickable" usemap="#plant_map" src="' + Path + '" alt="' + Alt + '">' +
         '</div>' +
@@ -32,7 +29,7 @@ function CreateClickableImageandAreasHTML(ControllerParameters) {
  * @param {any} Container
  * @param {any} Action: display or edit
  */
-function InitiateClickableImageandAreas(Container, Action, ControllerParameters) {
+function InitiateClickableImageandAreas(Container, Action) {
 
 
 
@@ -56,8 +53,6 @@ function InitiateClickableImageandAreas(Container, Action, ControllerParameters)
             stroke: true,
             clickNavigate: false,
             onClick: function (e) {
-                debugger;
-
                 //TransformToSlide
                 var TransformtoSlideNum = $("#" + Container).find('area[name="' + e.key + '"]').attr('TransformtoSlideNum');
                 var SourceSlide = GetIndexofSpecialItem($image.closest('.item'));
@@ -115,33 +110,23 @@ function InitiateClickableImageandAreas(Container, Action, ControllerParameters)
     //ADD LABEL FOR EACH AREA : firstly we should change the position of "imagemap" div to relative, then we add a span for each area and change the position to absolute
     $("#" + Container).find("div[id=imagemap]").css({ "position": "relative" });
     $("#" + Container).find("#plant_map").find('area').each(function () {
-        var label = $(this).attr('data-tooltip');
+        var txt = $(this).attr('data-tooltip');
         var coor = $(this).attr('coords');
         var coorA = coor.split(',');
         var left = parseInt(coorA[0]) + 5;
         var top = parseInt(coorA[1]);
         var transformtoslidenum = $(this).attr('transformtoslidenum'); 
-        var color = $(this).attr('color');
-        var DisplayLabel = ($(this).attr('DisplayLabel') == true || $(this).attr('DisplayLabel') == 'true' || $(this).attr('DisplayLabel') == 'True') ? true : false;
 
 
         var coords = coor.split(',').map(Number);
-        CreateAreaDesign({ 'x': left, 'y': top }, coords, Container, Action=='edit'? true : DisplayLabel, label,color, { 'DeleteButton': (Action == 'edit' ? true : false) }, transformtoslidenum);
+        CreateAreaDesign({ 'x': left, 'y': top }, coords, Container, txt, { 'DeleteButton': (Action == 'edit' ? true : false) }, transformtoslidenum);
     })
 
-    var clickingcolor = ControllerParameters.ClickingColor;
-    ChangeColorOfAreaByClicking(clickingcolor);
 }
 
-function ChangeColorOfAreaByClicking(ClickingColor) {
-    $("[id='imagemap']").find(".TransformtoSlide").click(function () {
-        debugger;
-        $(this).css('border', '4px solid ' + ClickingColor);
-    })
-}
 
 var areas = [];
-function AddandDeleteAreas(Container, AreaColor) {
+function AddandDeleteAreas(Container) {
     $('#' + Container).find('#image_Professional_Clickable').click(function (event) {
         //debugger;
         var imgOffset = $(this).offset();
@@ -154,7 +139,7 @@ function AddandDeleteAreas(Container, AreaColor) {
             var coords = [x.toFixed(2), y.toFixed(2), radius];
             areas.push({ coords: coords, label: label });
 
-            CreateAreaDesign({ 'x': x, 'y': y }, coords, Container,true, label, AreaColor, { 'DeleteButton': true },null);
+            CreateAreaDesign({ 'x': x, 'y': y }, coords, Container, label, { 'DeleteButton': true },null);
 
             //...............add it as a new record of table...............
             AddNewRowToProfessionalClickableTable(Container, (x + ',' + y + ',' + radius), label)
@@ -162,7 +147,7 @@ function AddandDeleteAreas(Container, AreaColor) {
     });
 }
 
-function CreateAreaDesign(DisplayingCoord, coords, Container,DisplayLabel, AreaLabel, AreaColor, Buttons, TransformtoSlideNum) {
+function CreateAreaDesign(DisplayingCoord, coords, Container, AreaLabel, Buttons, TransformtoSlideNum) {
 
     // Create a marker for the clicked area
     var $span = $('<span id="span_map_title" class="map_title"></span>').css({
@@ -173,10 +158,8 @@ function CreateAreaDesign(DisplayingCoord, coords, Container,DisplayLabel, AreaL
         fontSize: '14px'
     }).appendTo('#' + Container + ' #imagemap');
 
-    if (DisplayLabel == true) {
-        $('<i class="glyphicon glyphicon-arrow-right"></i>').appendTo($span);
-        $span.append(AreaLabel);
-    }
+    $('<i class="glyphicon glyphicon-arrow-right"></i>').appendTo($span);
+    $span.append(AreaLabel);
 
     // Create the marker inside the span
     $('<div class="marker TransformtoSlide" ' + (TransformtoSlideNum != null && TransformtoSlideNum>0 ? ('TransformtoSlideNum="' + TransformtoSlideNum+'"'): '') +'></div>').css({
@@ -185,9 +168,8 @@ function CreateAreaDesign(DisplayingCoord, coords, Container,DisplayLabel, AreaL
         left: '-20px',
         width: '35px',
         height: '35px',
-        border: '4px solid ' + AreaColor,
-        borderRadius: '50%',
-        cursor: 'pointer'
+        border: '4px solid red',
+        borderRadius: '50%'
     }).appendTo($span);
 
     //debugger;
