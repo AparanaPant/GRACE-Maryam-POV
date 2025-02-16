@@ -23,13 +23,10 @@ function NavigateToOtherSlideButton(SourceSlide, SlideNum) {
     var SourceSlideTitle = $("div.item:eq(" + (SourceSlide - 1) + ")").find("#h1_title").html();
 
     //set title
-    if (SourceSlideTitle != undefined && SourceSlideTitle != null && SourceSlideTitle != '')
-        $(nthItemDiv).find("#a_NavigateToOtherSlide").html("Click here to return to '" + SourceSlideTitle + "'");
-    else
-        $(nthItemDiv).find("#a_NavigateToOtherSlide").html("Click here to return back");
+    $(nthItemDiv).find("#a_NavigateToOtherSlide").html("Click here to return to '" + SourceSlideTitle + "'");
 
 }
-function NavigateToOtherSlideId(FromSlideId, SlideId, DisplayReturnToMainSlideButton) {
+function NavigateToOtherSlideId(FromSlideId, SlideId) {
     var nthItemDiv = $('div#' + SlideId + '.item');
 
     //display button
@@ -38,13 +35,7 @@ function NavigateToOtherSlideId(FromSlideId, SlideId, DisplayReturnToMainSlideBu
     //find title of the source slide
     var SourceSlideTitle = $('div#' + FromSlideId + '.item').find("#h1_title").html();
 
-    if (DisplayReturnToMainSlideButton == false)
-        ;
-    else {
-        //set title
-        if (SourceSlideTitle != undefined && SourceSlideTitle != null && SourceSlideTitle != '')
-            $(nthItemDiv).find("#a_NavigateToOtherSlide").html("Click here to return to '" + SourceSlideTitle + "'");
-        else
-            $(nthItemDiv).find("#a_NavigateToOtherSlide").html("Click here to return back");
-    }
+    //set title
+    $(nthItemDiv).find("#a_NavigateToOtherSlide").html("Click here to return to '" + SourceSlideTitle + "'");
+
 }
